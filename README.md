@@ -1,2 +1,3 @@
 # PyLadies_Snake
-The final project of the course on learning the basics of Python programming from PyLadies.
+The final project from the course on learning Python from PyLadies.
+
