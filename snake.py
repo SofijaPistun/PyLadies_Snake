@@ -11,6 +11,7 @@ class GameSnake:
         self.board = []
         self.head = (1, 3)
         self.way = 'd'
+        self.previous_way = self.way
         self.move = [0, 0]
         self.food = (0, 0)
         head_temp = list(self.head)
@@ -20,7 +21,8 @@ class GameSnake:
             2: tuple((head_temp[0], head_temp[1] - 2))
         }
         self.game_over_b = False
-        self.symbol_snake = 'O'
+        self.symbol_snake_head = 'O'
+        self.symbol_snake = '-'
         self.symbol_food = '@'
         self.symbol_border_top = '#'
         self.symbol_border_bottom = '#'
@@ -58,7 +60,9 @@ class GameSnake:
             for element in row:
                 if not self.game_over_b:
                     if element == self.symbol_snake:
-                        print(Back.BLUE + Fore.GREEN + Style.BRIGHT + f"{element}", end="")    
+                        print(Back.BLACK + Fore.BLACK + f"{element}", end="")    
+                    elif element == self.symbol_snake_head:
+                        print(Back.YELLOW + Fore.YELLOW + f"{element}", end="")
                     elif element == self.symbol_food:
                         print(Back.BLUE + f"{element}", end="") 
                     elif element == self.symbol_crash:
@@ -94,7 +98,12 @@ class GameSnake:
     
     def move_snake(self):
         while(True):
+            self.previous_way = self.way
             self.way = input('What is the snake\'s next move? The snake can move right (d), left (a), up (w) or down (s). Or you can end the game (end). ')
+            
+            if self.way == '':
+                self.way = self.previous_way
+            
             if self.way.lower() == 'd':
                 self.move = [0, 1] 
             elif self.way.lower() == 'a':
@@ -103,7 +112,10 @@ class GameSnake:
                 self.move = [-1, 0]
             elif self.way.lower() == 's':
                 self.move = [1, 0]
+            elif self.way.lower() == 'end':
+                break
             else:
+                print('The snake does not understand where to move. Enter the correct value. ')
                 continue
             
             head_temp = list(self.head)
@@ -152,7 +164,11 @@ class GameSnake:
         snake_temp = list(self.snake.values())
         for i in snake_temp:
             j = list(i)
-            self.board[j[0]][j[1]] = self.symbol_snake
+            
+            if i == self.head:
+                self.board[j[0]][j[1]] = self.symbol_snake_head
+            else:
+                self.board[j[0]][j[1]] = self.symbol_snake
 
         if self.game_over_b:
             snake_temp = list(self.snake.values())
@@ -169,8 +185,8 @@ class GameSnake:
     def start_game(self):
         while(True):           
             print('Enter the size for the game board: ') 
-            y = input('Horizontal (between 4..50, recommend value 25): ')
-            x = input('Vertical (between 4..25, recommend value 15): ')
+            y = input('Horizontal (between 4..50, ENTER for recommend value 22): ')
+            x = input('Vertical (between 4..25, ENTER for recommend value 11): ')
             if x != '' and y != '':
                 self.x = int(x)
                 self.y = int(y) + 1
@@ -180,6 +196,14 @@ class GameSnake:
                     break
                 else:
                     print('Size for the board is incorrect. Try again.')
+            elif x == '' and y == '':
+                y = 22
+                x = 11
+                self.x = int(x)
+                self.y = int(y) + 1
+                start_str = ' ' * ((self.y - len('Snake'))//2) + ' SNAKE ' + ' ' * ((self.y - len('Snake'))//2)
+                print(Back.BLUE + Fore.WHITE + start_str) 
+                break
             else:
                 continue
 
